@@ -1,9 +1,23 @@
 import React from "react";
 import { useFeedPostStyles } from "../../styles";
 import UserCard from "../shared/UserCard";
-import { CommentIcon, MoreIcon, ShareIcon } from "../../icons";
+import {
+  CommentIcon,
+  MoreIcon,
+  ShareIcon,
+  UnlikeIcon,
+  LikeIcon,
+  SaveIcon,
+  RemoveIcon,
+} from "../../icons";
 import { Link } from "react-router-dom";
-import { Button, Typography } from "@material-ui/core";
+import {
+  Button,
+  Divider,
+  Hidden,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 
 function FeedPost({ post }) {
@@ -16,7 +30,7 @@ function FeedPost({ post }) {
       <article className={classes.article}>
         {/* Feed Post Header */}
         <div className={classes.postHeader}>
-          <UserCard />
+          <UserCard user={user} />
           <MoreIcon className={classes.moreIcon} />
         </div>
         {/* Feed Post Image */}
@@ -26,12 +40,12 @@ function FeedPost({ post }) {
         {/* Feed Post Buttons */}
         <div className={classes.postButtonsWrapper}>
           <div className={classes.postButtons}>
-            {/* <LikeButton /> */}
+            <LikeButton />
             <Link to={`/p/${id}`}>
               <CommentIcon />
             </Link>
             <ShareIcon />
-            {/* <SaveButton /> */}
+            <SaveButton />
           </div>
           <Typography className={classes.like} variant="subtitle2">
             <span>{likes === 1 ? "1 like" : `${likes} likes`}</span>
@@ -71,22 +85,117 @@ function FeedPost({ post }) {
               </div>
             )}
           </div>
+          {/* Link to view all the comments */}
           <Link to={`/p/${id}`}>
-            <Typography 
-            className={classes.commentsLink}
-            variant="body2"
-            component="div">
+            <Typography
+              className={classes.commentsLink}
+              variant="body2"
+              component="div"
+            >
               View all {comments.length} comments
             </Typography>
           </Link>
+          {comments.map((comment) => (
+            <div key={comment.id}>
+              <Link to={`/$${comment.user.username}`}>
+                <Typography
+                  variant="subtitle2"
+                  component="span"
+                  className={classes.commentUsername}
+                >
+                  {comment.user.username}
+                </Typography>{" "}
+                <Typography variant="body2" component="span">
+                  {comment.content}
+                </Typography>
+              </Link>
+            </div>
+          ))}
+          <Typography color="textSecondary" className={classes.datePosted}>
+            5 DAYS AGO
+          </Typography>
         </div>
+        <Hidden XsDown>
+          <Divider />
+          <Comment />
+        </Hidden>
       </article>
     </>
   );
 }
+// Controls the Like Button
+function LikeButton() {
+  const classes = useFeedPostStyles();
+  const [liked, setLiked] = React.useState(false);
+  const Icon = liked ? UnlikeIcon : LikeIcon;
+  const className = liked ? classes.liked : classes.like;
+  const onClick = liked ? handleUnlike : handleLike;
 
-// function LikeButton() {}
+  function handleLike() {
+    console.log("like");
+    setLiked(true);
+  }
 
-// function SaveButton() {}
+  function handleUnlike() {
+    console.log("unlike");
+    setLiked(false);
+  }
+
+  return <Icon className={className} onClick={onClick} />;
+}
+// Controls the Save Button
+function SaveButton() {
+  const classes = useFeedPostStyles();
+  const [saved, setSaved] = React.useState(false);
+  const Icon = saved ? RemoveIcon : SaveIcon;
+  const onClick = saved ? handleRemove : handleSave;
+
+  function handleSave() {
+    console.log("save");
+    setSaved(true);
+  }
+
+  function handleRemove() {
+    console.log("remove");
+    setSaved(false);
+  }
+
+  return <Icon className={classes.saveIcon} onClick={onClick} />;
+}
+
+function Comment() {
+  const classes = useFeedPostStyles();
+  const [content, setContent] = React.useState("");
+
+  return (
+    <div className={classes.commentContainer}>
+      <TextField
+        fullWidth
+        value={content}
+        placeholder="Add a comment..."
+        multiline
+        rowsMax={2}
+        rows={1}
+        onChange={(event) => setContent(event.target.value)}
+        className={classes.textField}
+        InputProps={{
+          classes: {
+            root: classes.root,
+            underline: classes.underline,
+          },
+        }}
+      />
+      <Button
+        color="primary"
+        className={classes.commentButton}
+        // This next line "trims" or removes in this case whitespace and if anything
+        // else is left then this button will not be disabled.
+        disabled={!content.trim()}
+      >
+        Post
+      </Button>
+    </div>
+  );
+}
 
 export default FeedPost;
