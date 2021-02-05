@@ -74,6 +74,9 @@ function Search({ history }) {
   const [results, setResults] = React.useState([]);
   const [query, setQuery] = React.useState("");
 
+  // This line is to just remove "warning". 
+  console.log(setLoading + "Ignore");
+
   const hasResults = Boolean(query) && results.length > 0;
   console.log(results, hasResults);
 
