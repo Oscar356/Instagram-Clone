@@ -70,15 +70,11 @@ function Logo() {
 // Search Bar code.
 function Search({ history }) {
   const classes = useNavbarStyles();
-  const [loading, setLoading] = React.useState(false);
+  const [loading] = React.useState(false);
   const [results, setResults] = React.useState([]);
   const [query, setQuery] = React.useState("");
 
-  // This line is to just remove "warning". 
-  console.log(setLoading + "Ignore");
-
   const hasResults = Boolean(query) && results.length > 0;
-  console.log(results, hasResults);
 
   React.useEffect(() => {
     if (!query.trim()) return;
@@ -88,7 +84,7 @@ function Search({ history }) {
   function handleClearInput() {
     setQuery("");
   }
-  // Research WhiteTooltip
+  
   return (
     <Hidden xsDown>
       <WhiteTooltip
@@ -99,7 +95,7 @@ function Search({ history }) {
         titile={
           hasResults && (
             <Grid className={classes.resultContainer} container>
-              {results.map((result) => (
+              {results.map(result => (
                 <Grid
                   key={result.id}
                   item
@@ -128,7 +124,7 @@ function Search({ history }) {
       >
         <InputBase
           className={classes.input}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={event => setQuery(event.target.value)}
           startAdornment={<span className={classes.searchIcon} />}
           endAdornment={
             loading ? (
@@ -183,27 +179,27 @@ function Links({ path }) {
         <Link to="/explore">
           {path === "/explore" ? <ExploreActiveIcon /> : <ExploreIcon />}
         </Link>
-        {/* Controls the like Icon to be active or not. Its also going to control a list of some kind, still working on it */}
-        <div className={classes.notifications} onClick={handleToggleList}>
-          {showList ? <LikeActiveIcon /> : <LikeIcon />}
-        </div>
+        <RedTooltip
+          arrow
+          open={showTooltip}
+          onOpen={handleHideTooltip}
+          TransitionComponent={Zoom}
+          title={<NotificationTooltip />}
+        >
+          {/* Controls the like Icon to be active or not. Its also going to control a list of some kind, still working on it */}
+          <div className={classes.notifications} onClick={handleToggleList}>
+            {showList ? <LikeActiveIcon /> : <LikeIcon />}
+          </div>
+        </RedTooltip>
+        {/* This code puts a rings around the users picture if they are on they're profile */}
         <Link to={`/${defaultCurrentUser.username}`}>
-          <RedTooltip
-            arrow
-            open={showTooltip}
-            onOpen={handleHideTooltip}
-            TransitionComponent={Zoom}
-            title={<NotificationTooltip />}
-          >
-            {/* This code puts a rings around the users picture if they are on they're profile */}
-            <div
-              className={
-                path === `/${defaultCurrentUser.username}`
-                  ? classes.profileActive
-                  : ""
-              }
-            ></div>
-          </RedTooltip>
+          <div
+            className={
+              path === `/${defaultCurrentUser.username}`
+                ? classes.profileActive
+                : ""
+            }
+          ></div>
           <Avatar
             src={defaultCurrentUser.profile_image}
             className={classes.profileImage}
