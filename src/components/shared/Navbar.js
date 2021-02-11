@@ -84,6 +84,7 @@ function Search({ history }) {
   function handleClearInput() {
     setQuery("");
   }
+  console.log(results)
   
   return (
     <Hidden xsDown>
@@ -92,7 +93,7 @@ function Search({ history }) {
         interactive
         TransitionComponent={Fade}
         open={hasResults}
-        titile={
+        title={
           hasResults && (
             <Grid className={classes.resultContainer} container>
               {results.map(result => (
